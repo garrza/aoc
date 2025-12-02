@@ -1,0 +1,11 @@
+# Binaries
+*.exe
+*.test
+*.out
+
+# Input files (often ignored to avoid sharing puzzle inputs)
+input.txt
+
+# OS specific
+.DS_Store
+
