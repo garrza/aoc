@@ -15,6 +15,7 @@ func main() {
 	data := strings.TrimSpace(string(input))
 
 	fmt.Println(solve(data))
+	fmt.Println(solveOpt(data))
 }
 
 func solve(input string) int {
@@ -39,6 +40,55 @@ func solve(input string) int {
 			if pos == 0 {
 				zeroCount++
 			}
+		}
+	}
+	return zeroCount
+}
+
+func solveOpt(input string) int {
+	pos := 50
+
+	zeroCount := 0
+	for _, instruction := range strings.Split(input, "\n") {
+		// we split the instruction into two parts: the direction and the distance
+		direction := string(instruction[0])
+		distance := string(instruction[1:])
+		distanceInt, err := strconv.Atoi(distance)
+		if err != nil {
+			panic(err)
+		}
+		// optimization: instead of iterating, calculate the crossings mathematically.
+		// each 100 steps in any direction crosses 0 exactly once.
+		zeroCount += distanceInt / 100
+		rem := distanceInt % 100
+
+		stepsToZero := 0
+		if direction == "L" {
+			// moving left (decreasing pos)
+			if pos == 0 {
+				stepsToZero = 100
+			} else {
+				stepsToZero = pos
+			}
+			pos = (pos - distanceInt) % 100
+		} else {
+			// moving right (increasing pos)
+			if pos == 0 {
+				stepsToZero = 100
+			} else {
+				stepsToZero = 100 - pos
+			}
+			pos = (pos + distanceInt) % 100
+		}
+
+		// fix negative modulo result to ensure pos is in [0, 99]
+		if pos < 0 {
+			pos += 100
+		}
+
+		// check if the remainder of the steps crossed 0
+		if rem >= stepsToZero {
+			zeroCount++
 		}
 	}
 	return zeroCount
