@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -13,15 +14,32 @@ func main() {
 	}
 	data := strings.TrimSpace(string(input))
 
-	fmt.Println("Part 1:", solvePart1(data))
-	fmt.Println("Part 2:", solvePart2(data))
+	fmt.Println(solve(data))
 }
 
-func solvePart1(input string) int {
-	return 0
-}
+func solve(input string) int {
+	pos := 50
 
-func solvePart2(input string) int {
-	return 0
+	zeroCount := 0
+	for _, instruction := range strings.Split(input, "\n") {
+		// we split the instruction into two parts: the direction and the distance
+		direction := string(instruction[0])
+		distance := string(instruction[1:])
+		distanceInt, err := strconv.Atoi(distance)
+		if err != nil {
+			panic(err)
+		}
+		if direction == "L" {
+			pos = (pos - distanceInt) % 100
+			if pos == 0 {
+				zeroCount++
+			}
+		} else {
+			pos = (pos + distanceInt) % 100
+			if pos == 0 {
+				zeroCount++
+			}
+		}
+	}
+	return zeroCount
 }
-
