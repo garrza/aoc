@@ -54,7 +54,7 @@ func solve(input string) (int, error) {
 	return sum, nil
 }
 
-// isRepeatedSequence checks if the ID consists of a sequence of digits repeated twice or more.
+// isInvalidId checks if the ID consists of a sequence of digits repeated twice or more.
 func isInvalidId(id int) bool {
 	s := strconv.Itoa(id)
 	n := len(s)
