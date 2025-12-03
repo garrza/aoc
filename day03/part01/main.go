@@ -30,7 +30,7 @@ func solve(input string) int {
 
 	total := 0
 	for _, bank := range strings.Split(input, "\n") {
-		bankJoltage := calculateBankJoltage(bank)
+		bankJoltage := calculateBankJoltageOptimized(bank)
 		total += bankJoltage
 	}
 	return total
@@ -53,6 +53,43 @@ func calculateBankJoltage(bank string) int {
 			if joltage > maxJoltage {
 				maxJoltage = joltage
 			}
+		}
+	}
+
+	return maxJoltage
+}
+
+func calculateBankJoltageOptimized(bank string) int {
+	// we need to find two digits in the string (at indices i and j where i < j)
+	// such that the number formed by concatenating them is maximized.
+	// since we want to maximize a 2-digit number, we prioritize the first digit (tens place).
+	// we can reduce complexity to o(n) time by precomputing the maximum digit to the right of each index
+
+	n := len(bank)
+	if n < 2 {
+		return 0
+	}
+
+	maxSuffix := make([]int, n)
+	currentMax := -1
+
+	for i := n - 1; i >= 0; i-- {
+		digit := int(bank[i] - '0')
+		if digit > currentMax {
+			currentMax = digit
+		}
+		maxSuffix[i] = currentMax
+	}
+
+	maxJoltage := 0
+
+	// the second digit is the maximum digit to the right of the current index
+	for i := 0; i < n-1; i++ {
+		digit1 := int(bank[i] - '0')
+		digit2 := maxSuffix[i+1]
+		joltage := digit1*10 + digit2
+		if joltage > maxJoltage {
+			maxJoltage = joltage
 		}
 	}
 
