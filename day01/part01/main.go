@@ -23,13 +23,11 @@ func solve(input string) int {
 	zeroCount := 0
 	for _, instruction := range strings.Split(input, "\n") {
 		// we split the instruction into two parts: the direction and the distance
-		direction := string(instruction[0])
-		distance := string(instruction[1:])
-		distanceInt, err := strconv.Atoi(distance)
+		distanceInt, err := strconv.Atoi(instruction[1:])
 		if err != nil {
 			panic(err)
 		}
-		if direction == "L" {
+		if instruction[0] == 'L' {
 			pos = (pos - distanceInt) % 100
 			if pos == 0 {
 				zeroCount++
