@@ -54,13 +54,13 @@ func solve(input string) (int, error) {
 	return sum, nil
 }
 
-// isInvalidId checks if the ID consists of a sequence of digits repeated twice.
-// Examples: 55 (5 repeated), 6464 (64 repeated), 123123 (123 repeated).
+// isInvalidId checks if the id consists of a sequence of digits repeated twice.
+// examples: 55 (5 repeated), 6464 (64 repeated), 123123 (123 repeated).
 func isInvalidId(id int) bool {
 	s := strconv.Itoa(id)
 	n := len(s)
 
-	// An ID must have an even number of digits to be split into two identical halves
+	// an ID must have an even number of digits to be split into two identical halves
 	if n%2 != 0 {
 		return false
 	}

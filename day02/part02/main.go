@@ -59,8 +59,8 @@ func isInvalidId(id int) bool {
 	s := strconv.Itoa(id)
 	n := len(s)
 
-	// Try all possible lengths for the repeating sequence.
-	// The sequence length `k` must be at most n/2 because it needs to repeat at least twice.
+	// try all possible lengths for the repeating sequence.
+	// the sequence length `k` must be at most n/2 because it needs to repeat at least twice.
 	for k := 1; k <= n/2; k++ {
 		// If the total length isn't divisible by k, this sequence length can't work.
 		if n%k != 0 {
