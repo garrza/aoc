@@ -14,4 +14,3 @@ To run a specific day's solution:
 cd dayXX
 go run main.go
 ```
-
