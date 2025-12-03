@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -10,47 +11,60 @@ import (
 func main() {
 	input, err := os.ReadFile("input.txt")
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed to read input file: %v", err)
 	}
-	data := strings.TrimSpace(string(input))
 
-	fmt.Println(solve(data))
+	result, err := solve(string(input))
+	if err != nil {
+		log.Fatalf("failed to solve: %v", err)
+	}
+
+	fmt.Println(result)
 }
 
-func solve(input string) int {
-	// id ranges into two parts: the start and the end
-	// these ranges are separated by '-'
-	// all of the id ranges are separated by ','
+func solve(input string) (int, error) {
+	input = strings.TrimSpace(input)
+	// Input format: "start-end,start-end,..."
+	ranges := strings.Split(input, ",")
+
 	sum := 0
-	for _, idRange := range strings.Split(input, ",") {
-		// int can't have leading zeros, converting to int makes sure we don't have any invalid invalid ids
-		start, end, _ := strings.Cut(idRange, "-")
-		startInt, err := strconv.Atoi(start)
-		if err != nil {
-			panic(err)
+	for _, r := range ranges {
+		startStr, endStr, found := strings.Cut(r, "-")
+		if !found {
+			return 0, fmt.Errorf("invalid range format: %q", r)
 		}
-		endInt, err := strconv.Atoi(end)
+
+		start, err := strconv.Atoi(startStr)
 		if err != nil {
-			panic(err)
+			return 0, fmt.Errorf("invalid start value %q: %w", startStr, err)
 		}
-		// we now want to check if the id is valid
-		for i := startInt; i <= endInt; i++ {
-			if isInvalid(i) {
-				sum += i
+
+		end, err := strconv.Atoi(endStr)
+		if err != nil {
+			return 0, fmt.Errorf("invalid end value %q: %w", endStr, err)
+		}
+
+		for id := start; id <= end; id++ {
+			if isInvalidId(id) {
+				sum += id
 			}
 		}
 	}
-	return sum
+
+	return sum, nil
 }
 
-func isInvalid(id int) bool {
-	// an id is invalid when it has a sequence of digits repeated twice (55 (5 twice), 6464 (64 twice), 123123 (123 twice))
-	// none of the numbers have leading zeros (0101 isn't an ID at all, 101 is a valid ID that you would ignore)
-	// 38593859 would be invalid because 38593859 has a sequence of digits repeated twice (3859)
-	idStr := strconv.Itoa(id)
-	if len(idStr)%2 != 0 {
+// isRepeatedSequence checks if the ID consists of a sequence of digits repeated twice.
+// Examples: 55 (5 repeated), 6464 (64 repeated), 123123 (123 repeated).
+func isInvalidId(id int) bool {
+	s := strconv.Itoa(id)
+	n := len(s)
+
+	// An ID must have an even number of digits to be split into two identical halves
+	if n%2 != 0 {
 		return false
 	}
-	half := len(idStr) / 2
-	return idStr[:half] == idStr[half:]
+
+	half := n / 2
+	return s[:half] == s[half:]
 }
