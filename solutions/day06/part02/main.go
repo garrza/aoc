@@ -23,25 +23,25 @@ func main() {
 }
 
 func solve(input string) int {
-	// 	same thing, however, now we must also separate the digits themselves
-	// 	this will be done from top to bottom, right-to-left
+	// Parse columns from right to left, where each column represents a digit position
+	// Blank columns (no digits) separate different problems
+	// Example:
 	// 	123 328  51 64
 	//  45 64  387 23
 	//   6 98  215 314
 	//  *   +   *   +
-	// the rightmost problem is 4 + 431 + 623 = 1058
-	// the second problem from the right is 175 * 581 * 32 = 3253600
+	// Rightmost problem: columns [4,3,2] -> 4 + 431 + 623 = 1058
+	// Next problem: columns [5,1,7] -> 175 * 581 * 32 = 3253600
 
 	lines := strings.Split(strings.TrimRight(input, "\n"), "\n")
 	if len(lines) == 0 {
 		return 0
 	}
-	operatorLine := lines[len(lines)-1]
-	operators := strings.Fields(operatorLine)
 
+	operators := strings.Fields(lines[len(lines)-1])
 	matrixLines := lines[:len(lines)-1]
 
-	// Find max width
+	// find max width across all lines
 	maxWidth := 0
 	for _, line := range matrixLines {
 		if len(line) > maxWidth {
@@ -49,51 +49,54 @@ func solve(input string) int {
 		}
 	}
 
-	result := 0
-	var currentBlock []int
-	opIndex := len(operators) - 1
+	// prse columns right-to-left, collecting problems
+	var problems [][]int
+	var currentProblem []int
 
 	for col := maxWidth - 1; col >= 0; col-- {
-		// Extract digits for this column from top to bottom
-		digits := ""
-		for _, line := range matrixLines {
-			if col < len(line) {
-				char := line[col]
-				if char >= '0' && char <= '9' {
-					digits += string(char)
-				}
-			}
-		}
+		columnDigits := extractColumn(matrixLines, col)
 
-		if len(digits) > 0 {
-			num, _ := strconv.Atoi(digits)
-			currentBlock = append(currentBlock, num)
-		} else {
-			// Empty column (separator)
-			if len(currentBlock) > 0 {
-				// Process the block
-				op := ""
-				if opIndex >= 0 {
-					op = operators[opIndex]
-					opIndex--
-				}
-				result += evaluateExpression(currentBlock, op)
-				currentBlock = []int{}
-			}
+		if len(columnDigits) > 0 {
+			// Column has digits - add number to current problem
+			num, _ := strconv.Atoi(columnDigits)
+			currentProblem = append(currentProblem, num)
+		} else if len(currentProblem) > 0 {
+			// Blank column acts as separator - save current problem
+			problems = append(problems, currentProblem)
+			currentProblem = []int{}
 		}
 	}
 
-	// Process remaining block if any
-	if len(currentBlock) > 0 {
+	// last problem
+	if len(currentProblem) > 0 {
+		problems = append(problems, currentProblem)
+	}
+
+	// evaluate each problem with its operator (problems are in reverse order)
+	result := 0
+	for i, problem := range problems {
 		op := ""
-		if opIndex >= 0 {
-			op = operators[opIndex]
+		if i < len(operators) {
+			op = operators[len(operators)-1-i]
 		}
-		result += evaluateExpression(currentBlock, op)
+		result += evaluateExpression(problem, op)
 	}
 
 	return result
+}
 
+// extractColumn reads a column top-to-bottom and returns the digits as a string
+func extractColumn(lines []string, col int) string {
+	digits := ""
+	for _, line := range lines {
+		if col < len(line) {
+			char := line[col]
+			if char >= '0' && char <= '9' {
+				digits += string(char)
+			}
+		}
+	}
+	return digits
 }
 
 func evaluateExpression(col []int, operator string) int {
