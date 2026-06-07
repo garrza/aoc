@@ -1,0 +1,50 @@
+name: Deploy HerbGraph to Pages
+
+# Publishes the static HerbGraph app to GitHub Pages so it can be viewed
+# from any device (e.g. iPhone Safari -> AirPlay to Apple TV).
+#
+# One-time setup: in the repo, go to Settings -> Pages and set
+# "Build and deployment" Source to "GitHub Actions". After that this
+# workflow publishes on every push that touches the app.
+
+on:
+  push:
+    branches:
+      - main
+      - claude/3d-ranking-graph-app-k92dl
+    paths:
+      - 'apps/herbgraph/**'
+      - '.github/workflows/deploy-herbgraph.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment, cancel in-progress runs.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload app as Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/herbgraph
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0a0c11" />
+  <title>HerbGraph</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">▚</span>
+      <h1>Herb<span>Graph</span></h1>
+      <span class="version">v1 · 3-AXIS RANKING</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="stat-val" id="stat-count">0</span><span class="stat-lbl">SUBJECTS</span></div>
+      <div class="stat"><span class="stat-val" id="stat-avg">—</span><span class="stat-lbl">AVG SCORE</span></div>
+      <div class="stat"><span class="stat-val" id="stat-top">—</span><span class="stat-lbl">TOP</span></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT: input + leaderboard -->
+    <section class="panel sidebar">
+      <form id="entry-form" autocomplete="off">
+        <h2 id="form-title">// ADD SUBJECT</h2>
+        <input type="hidden" id="edit-id" value="" />
+
+        <label class="field">
+          <span>NAME</span>
+          <input type="text" id="name" placeholder="name or alias" maxlength="40" required />
+        </label>
+
+        <label class="field">
+          <span>INSTAGRAM <em>(optional)</em></span>
+          <div class="ig-input">
+            <span class="ig-at">@</span>
+            <input type="text" id="ig" placeholder="handle" maxlength="40" />
+          </div>
+        </label>
+
+        <div class="axis" data-axis="x">
+          <div class="axis-head"><span class="pole neg">Naca</span><span class="pole pos">Fresa</span></div>
+          <input type="range" id="ax-x" min="-5" max="5" step="0.5" value="0" />
+          <output id="out-x">0.0</output>
+        </div>
+        <div class="axis" data-axis="y">
+          <div class="axis-head"><span class="pole neg">Basic</span><span class="pole pos">Artsy</span></div>
+          <input type="range" id="ax-y" min="-5" max="5" step="0.5" value="0" />
+          <output id="out-y">0.0</output>
+        </div>
+        <div class="axis" data-axis="z">
+          <div class="axis-head"><span class="pole neg">Culera</span><span class="pole pos">Chida</span></div>
+          <input type="range" id="ax-z" min="-5" max="5" step="0.5" value="0" />
+          <output id="out-z">0.0</output>
+        </div>
+
+        <div class="preview">
+          <div class="score-big"><span id="preview-score">5.0</span><small>/10</small></div>
+          <div class="preview-right">
+            <div class="tier-badge" id="preview-tier">B</div>
+            <div class="zone-tag" id="preview-zone" hidden></div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary" id="submit-btn">+ ADD</button>
+          <button type="button" class="btn ghost" id="cancel-btn" hidden>CANCEL</button>
+        </div>
+      </form>
+
+      <div class="leaderboard">
+        <div class="lb-head">
+          <h2>// RANKING</h2>
+          <button type="button" class="btn tiny danger" id="clear-all">CLEAR</button>
+        </div>
+        <ol id="ranking-list" class="ranking"></ol>
+        <p id="empty-note" class="empty-note">No subjects yet. Add the first one.</p>
+      </div>
+    </section>
+
+    <!-- RIGHT: 3D graph -->
+    <section class="panel graph-wrap">
+      <div id="graph"></div>
+
+      <div class="graph-controls">
+        <button class="ctl" id="zoom-in" title="Zoom in">+</button>
+        <button class="ctl" id="zoom-out" title="Zoom out">−</button>
+        <button class="ctl" id="reset-view" title="Reset view">⟳</button>
+        <button class="ctl" id="toggle-zones" title="Toggle sweet spots" data-on="1">◆</button>
+        <button class="ctl" id="fullscreen" title="Fullscreen / cast">⤢</button>
+      </div>
+
+      <div class="legend" id="legend"></div>
+      <div class="graph-hint">drag to rotate · pinch / scroll to zoom · tap a point to select</div>
+      <div id="tooltip" class="tooltip" hidden></div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
